@@ -1,0 +1,9 @@
+{
+  "name": "nazieraaziz-cms",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "publish": "wrangler publish"
+  }
+}

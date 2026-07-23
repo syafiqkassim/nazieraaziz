@@ -1,0 +1,18 @@
+name = "nazieraaziz-cms"
+account_id = "YOUR_ACCOUNT_ID"
+compatibility_date = "2026-07-23"
+workers_dev = true
+route = ""
+
+# D1 and R2 bindings
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nazieraaziz_db"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "nazieraaziz-images"
+
+[vars]
+JWT_SECRET = "replace-with-a-strong-secret"
