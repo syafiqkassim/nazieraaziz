@@ -933,21 +933,19 @@ var _process = {
 };
 var process_default = _process;
 globalThis.process = process_default;
-async function onRequestGet() {
-  return new Response(
-    JSON.stringify({
-      hero: {
-        name: "Dr. Naziera Aziz",
-        title: "Autism Researcher",
-        description: "Welcome to my website."
-      }
-    }),
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
-  );
+async function onRequestGet(context2) {
+  const { DB } = context2.env;
+  const row = await DB.prepare(
+    "SELECT content FROM site_content WHERE section = ?"
+  ).bind("hero").first();
+  if (!row) {
+    return Response.json({
+      error: "No data found"
+    }, { status: 404 });
+  }
+  return Response.json({
+    hero: JSON.parse(row.content)
+  });
 }
 __name(onRequestGet, "onRequestGet");
 __name2(onRequestGet, "onRequestGet");

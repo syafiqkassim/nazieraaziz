@@ -929,21 +929,19 @@ var process_default = _process;
 globalThis.process = process_default;
 
 // api/load.js
-async function onRequestGet() {
-  return new Response(
-    JSON.stringify({
-      hero: {
-        name: "Dr. Naziera Aziz",
-        title: "Autism Researcher",
-        description: "Welcome to my website."
-      }
-    }),
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
-  );
+async function onRequestGet(context2) {
+  const { DB } = context2.env;
+  const row = await DB.prepare(
+    "SELECT content FROM site_content WHERE section = ?"
+  ).bind("hero").first();
+  if (!row) {
+    return Response.json({
+      error: "No data found"
+    }, { status: 404 });
+  }
+  return Response.json({
+    hero: JSON.parse(row.content)
+  });
 }
 __name(onRequestGet, "onRequestGet");
 
@@ -3876,7 +3874,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-wj4jlz/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-SCD5dE/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -3908,7 +3906,7 @@ function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-wj4jlz/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-SCD5dE/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
