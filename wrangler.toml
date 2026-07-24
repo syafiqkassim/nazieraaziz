@@ -1,18 +1,10 @@
 name = "nazieraaziz-cms"
-account_id = "YOUR_ACCOUNT_ID"
-compatibility_date = "2026-07-23"
-workers_dev = true
-route = ""
+compatibility_date = "2026-07-24"
+pages_build_output_dir = "."
 
-# D1 and R2 bindings
+compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
 binding = "DB"
-database_name = "nazieraaziz_db"
-
-[[r2_buckets]]
-binding = "IMAGES"
-bucket_name = "nazieraaziz-images"
-
-[vars]
-JWT_SECRET = "replace-with-a-strong-secret"
+database_name = "naziera-cms"
+database_id = "d5858cec-5b7e-4e0c-8361-9136b607d027"

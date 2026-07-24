@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CMS Admin Dashboard</title>
   <link rel="stylesheet" href="css/dashboard.css" />
+  <script>
+    // Preload auth check: redirect to login if session invalid
+    (function(){
+      try {
+        const resp = fetch('/api/auth', { method: 'GET', credentials: 'same-origin' }).then(r => {
+          if (!r.ok) {
+            window.location.href = '/admin/login.html';
+          }
+        }).catch(() => { window.location.href = '/admin/login.html'; });
+      } catch (e) {
+        window.location.href = '/admin/login.html';
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="dashboard-shell">
@@ -476,6 +490,7 @@
     </main>
   </div>
 
+  <script src="js/hero.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>

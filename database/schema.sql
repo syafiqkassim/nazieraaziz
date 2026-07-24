@@ -1,114 +1,137 @@
 CREATE TABLE IF NOT EXISTS admins (
-  id TEXT PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  full_name TEXT,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
-  role TEXT DEFAULT 'admin',
-  created_at INTEGER DEFAULT (strftime('%s','now')),
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
+  role TEXT NOT NULL DEFAULT 'admin',
+  is_active INTEGER DEFAULT 1,
+  last_login DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS hero (
-  id TEXT PRIMARY KEY,
-  role TEXT,
-  summary TEXT,
-  profile_photo TEXT,
-  name TEXT,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT,
+  subtitle TEXT,
   headline TEXT,
   description TEXT,
-  button_text TEXT,
-  button_link TEXT,
-  background_image TEXT,
+  primary_cta_text TEXT,
+  primary_cta_link TEXT,
+  secondary_cta_text TEXT,
+  secondary_cta_link TEXT,
+  image_url TEXT,
   stats_json TEXT,
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS about (
-  id TEXT PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT,
+  intro TEXT,
   biography TEXT,
   vision TEXT,
   mission TEXT,
-  experience TEXT,
+  experience_years INTEGER,
   education TEXT,
   achievements TEXT,
-  skills TEXT,
-  research_interest TEXT,
-  cv_link TEXT,
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
-);
-
-CREATE TABLE IF NOT EXISTS portfolio (
-  id TEXT PRIMARY KEY,
-  title TEXT,
-  description TEXT,
-  category TEXT,
-  website TEXT,
-  github TEXT,
-  image TEXT,
-  created_at INTEGER DEFAULT (strftime('%s','now')),
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS services (
-  id TEXT PRIMARY KEY,
-  title TEXT,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
   description TEXT,
   icon TEXT,
-  url TEXT,
-  created_at INTEGER DEFAULT (strftime('%s','now')),
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
+  link TEXT,
+  sort_order INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS portfolio (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  description TEXT,
+  category TEXT,
+  image_url TEXT,
+  link TEXT,
+  sort_order INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS gallery (
-  id TEXT PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT,
   description TEXT,
-  image_url TEXT,
+  image_url TEXT NOT NULL,
   category TEXT,
-  created_at INTEGER DEFAULT (strftime('%s','now')),
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
-);
-
-CREATE TABLE IF NOT EXISTS contact (
-  id TEXT PRIMARY KEY,
-  phone TEXT,
-  email TEXT,
-  office_address TEXT,
-  maps_url TEXT,
-  facebook TEXT,
-  instagram TEXT,
-  linkedin TEXT,
-  tiktok TEXT,
-  researchgate TEXT,
-  google_scholar TEXT,
-  orcid TEXT,
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
+  sort_order INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS testimonials (
-  id TEXT PRIMARY KEY,
-  quote TEXT,
-  author TEXT,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  quote TEXT NOT NULL,
+  author TEXT NOT NULL,
   role TEXT,
-  created_at INTEGER DEFAULT (strftime('%s','now'))
+  company TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS contact (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT,
+  phone TEXT,
+  address TEXT,
+  maps_link TEXT,
+  availability TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS social_links (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  platform TEXT NOT NULL,
+  url TEXT NOT NULL,
+  sort_order INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS seo (
-  id TEXT PRIMARY KEY,
-  page TEXT,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  page TEXT NOT NULL UNIQUE,
   title TEXT,
   description TEXT,
   keywords TEXT,
   og_image TEXT,
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS settings (
-  id TEXT PRIMARY KEY,
-  site_title TEXT,
-  site_description TEXT,
-  logo_url TEXT,
-  favicon_url TEXT,
-  admin_email TEXT,
-  updated_at INTEGER DEFAULT (strftime('%s','now'))
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  key TEXT NOT NULL UNIQUE,
+  value TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS media (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  filename TEXT NOT NULL,
+  file_path TEXT NOT NULL,
+  mime_type TEXT,
+  file_size INTEGER,
+  alt_text TEXT,
+  uploaded_by INTEGER,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(uploaded_by) REFERENCES admins(id)
 );

@@ -5,5 +5,11 @@
   "scripts": {
     "dev": "wrangler dev",
     "publish": "wrangler publish"
+  },
+  "devDependencies": {
+    "wrangler": "^4.114.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3"
   }
 }

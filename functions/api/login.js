@@ -1,25 +1,44 @@
-import { jsonResponse, badRequest, unauthorized, signJwt, sha256Hex } from '../helpers.js';
+import bcrypt from 'bcryptjs';
+import { jsonResponse, badRequest, unauthorized, signJwt } from '../helpers.js';
 
 export async function onRequest({ request, env }) {
-  if (request.method !== 'POST') {
-    return badRequest('Only POST is supported for login.');
+  if (request.method !== 'POST') return badRequest('Only POST allowed');
+
+  if (!env?.DB) return jsonResponse({ error: 'D1 database not configured' }, 500);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return badRequest('Invalid JSON body');
   }
 
-  const body = await request.json().catch(() => null);
-  if (!body || !body.email || !body.password) {
-    return badRequest('Email and password are required.');
-  }
+  const email = (body?.email || '').trim().toLowerCase();
+  const password = body?.password || '';
 
-  const user = await env.DB.prepare('SELECT id, email, password_hash FROM users WHERE email = ?').bind(body.email).first();
-  if (!user) {
-    return unauthorized('Invalid credentials.');
-  }
+  if (!email || !password) return badRequest('Email and password required');
 
-  const candidateHash = await sha256Hex(body.password);
-  if (candidateHash !== user.password_hash) {
-    return unauthorized('Invalid credentials.');
-  }
+  try {
+    const user = await env.DB.prepare('SELECT id, email, password_hash, is_active FROM admins WHERE email = ?').bind(email).first();
+    if (!user) return unauthorized('Invalid credentials');
+    if (user.is_active === 0) return jsonResponse({ error: 'Account disabled' }, 403);
 
-  const token = await signJwt({ sub: user.id, email: user.email }, env.JWT_SECRET);
-  return jsonResponse({ token, user: { id: user.id, email: user.email } });
+    const matches = bcrypt.compareSync(password, user.password_hash);
+    if (!matches) return unauthorized('Invalid credentials');
+
+    const token = await signJwt({ sub: user.id, email: user.email }, env.JWT_SECRET);
+
+    const maxAge = 60 * 60 * 24; // 1 day
+    const cookie = `session=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=Strict; Secure;`;
+
+    return new Response(JSON.stringify({ message: 'Authenticated', redirect: '/admin/dashboard.html' }), {
+      status: 200,
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'Set-Cookie': cookie,
+      },
+    });
+  } catch (err) {
+    return jsonResponse({ error: err.message || 'Authentication failed' }, 500);
+  }
 }

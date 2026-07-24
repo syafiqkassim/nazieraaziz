@@ -32,7 +32,7 @@ togglePassword.addEventListener('click', () => {
   togglePassword.setAttribute('aria-label', isPasswordVisible ? 'Show password' : 'Hide password');
 });
 
-loginForm.addEventListener('submit', (event) => {
+loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearNotification();
 
@@ -52,19 +52,28 @@ loginForm.addEventListener('submit', (event) => {
 
   setLoading(true);
 
-  window.setTimeout(() => {
-    setLoading(false);
+  try {
+    const resp = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-    const validEmail = 'syafiqkassim@gmail.com';
-    const validPassword = 'Kholis2013!';
+    const data = await resp.json().catch(() => ({}));
 
-    if (email.toLowerCase() === validEmail && password === validPassword) {
-      showNotification('success', 'Login successful. Redirecting to dashboard...');
-      window.setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1200);
-    } else {
-      showNotification('error', 'Invalid credentials. Please try again.');
+    if (resp.ok) {
+      showNotification('success', data.message || 'Login successful. Redirecting...');
+      setTimeout(() => {
+        window.location.href = data.redirect || '/admin/dashboard.html';
+      }, 600);
+      return;
     }
-  }, 1100);
+
+    const message = data.error || (resp.status === 401 ? 'Invalid email or password.' : 'Login failed.');
+    showNotification('error', message);
+  } catch (err) {
+    showNotification('error', 'Network error. Please try again.');
+  } finally {
+    setLoading(false);
+  }
 });

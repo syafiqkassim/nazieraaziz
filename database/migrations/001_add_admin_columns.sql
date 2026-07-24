@@ -1,0 +1,3 @@
+ALTER TABLE admins ADD COLUMN is_active INTEGER DEFAULT 1;
+
+ALTER TABLE admins ADD COLUMN last_login DATETIME;

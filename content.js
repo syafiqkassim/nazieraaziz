@@ -75,17 +75,27 @@ async function fetchJson(path) {
 }
 
 async function loadHero() {
-  const result = await fetchJson(`${apiBase}/hero`);
-  const data = result?.data;
+  // Fetch hero from the Pages Function /api/get-hero which returns { hero }
+  const result = await fetchJson(`${apiBase}/get-hero`);
+  const data = result?.hero;
   if (!data) return;
 
-  setText('heroRole', data.role || 'Autism Expert · Inclusivity Advocate · Mental Wellness Coach');
+  // Map DB fields to existing UI IDs without changing layout
+  setText('heroRole', data.subtitle || 'Autism Expert · Inclusivity Advocate · Mental Wellness Coach');
   setText('heroHeadline', data.headline || 'Naziera membantu keluarga dan komuniti memahami autism dengan penuh empati, ilmu dan sokongan berstruktur.');
   setText('heroDescription', data.description || 'Dengan pengalaman bertahun-tahun dalam pendidikan khas, latihan profesional dan sokongan keluarga, Naziera memberi panduan praktikal dan strategi inklusif untuk anak-anak, remaja serta dewasa berkeperluan khas.');
-  setText('heroCardSummary', data.summary || 'Naziera Aziz adalah pakar autism, jurulatih keluarga dan penceramah berkaitan kesejahteraan mental serta kebolehcapaian. Fokus beliau ialah membina hubungan positif dan persekitaran sokongan untuk individu neurodivergent.');
-  setText('heroCta', data.button_text || 'Tempah Konsultasi');
-  setHref('heroCta', data.button_link || '#contact');
-  updateStatGrid(data.stats || [
+  setText('heroCardSummary', data.title || 'Naziera Aziz adalah pakar autism, jurulatih keluarga dan penceramah berkaitan kesejahteraan mental serta kebolehcapaian. Fokus beliau ialah membina hubungan positif dan persekitaran sokongan untuk individu neurodivergent.');
+  setText('heroCta', data.primary_cta_text || 'Tempah Konsultasi');
+  setHref('heroCta', data.primary_cta_link || '#contact');
+
+  // stats_json stored as JSON string in DB; fall back to defaults when absent
+  let stats = null;
+  try {
+    if (data.stats_json) stats = JSON.parse(data.stats_json);
+  } catch (e) {
+    stats = null;
+  }
+  updateStatGrid(stats || [
     { label: 'tahun pengalaman', value: '10+' },
     { label: 'keluarga disokong', value: '500+' },
     { label: 'program dan bengkel', value: '40+' },
