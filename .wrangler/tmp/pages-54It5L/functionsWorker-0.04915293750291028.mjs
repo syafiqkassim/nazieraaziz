@@ -928,6 +928,25 @@ var process_default = _process;
 // ../node_modules/wrangler/_virtual_unenv_global_polyfill-@cloudflare-unenv-preset-node-process
 globalThis.process = process_default;
 
+// api/load.js
+async function onRequestGet() {
+  return new Response(
+    JSON.stringify({
+      hero: {
+        name: "Dr. Naziera Aziz",
+        title: "Autism Researcher",
+        description: "Welcome to my website."
+      }
+    }),
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+}
+__name(onRequestGet, "onRequestGet");
+
 // helpers.js
 var encoder = new TextEncoder();
 var decoder = new TextDecoder();
@@ -3054,7 +3073,10 @@ async function onRequest6({ request, env: env2 }) {
     if (!matches) return unauthorized("Invalid credentials");
     const token = await signJwt({ sub: user.id, email: user.email }, env2.JWT_SECRET);
     const maxAge = 60 * 60 * 24;
-    const cookie = `session=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=Strict; Secure;`;
+    const host = request.headers.get("host") || "";
+    const isLocal = host.includes("localhost") || host.startsWith("127.") || host.startsWith("[::1]");
+    const secureFlag = isLocal ? "" : "Secure;";
+    const cookie = `session=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=Strict; ${secureFlag}`;
     return new Response(JSON.stringify({ message: "Authenticated", redirect: "/admin/dashboard.html" }), {
       status: 200,
       headers: {
@@ -3073,7 +3095,10 @@ async function onRequest7({ request }) {
   if (request.method !== "POST" && request.method !== "GET") {
     return jsonResponse({ error: "Method not allowed" }, 405);
   }
-  const cookie = "session=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict; Secure;";
+  const host = request.headers.get("host") || "";
+  const isLocal = host.includes("localhost") || host.startsWith("127.") || host.startsWith("[::1]");
+  const secureFlag = isLocal ? "" : "Secure;";
+  const cookie = `session=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict; ${secureFlag}`;
   return new Response(JSON.stringify({ message: "Logged out", redirect: "/admin/login.html" }), {
     status: 200,
     headers: {
@@ -3263,8 +3288,15 @@ async function onRequest12({ request, env: env2 }) {
 }
 __name(onRequest12, "onRequest");
 
-// ../.wrangler/tmp/pages-ITqiD6/functionsRoutes-0.8151790510087581.mjs
+// ../.wrangler/tmp/pages-54It5L/functionsRoutes-0.1312562979381927.mjs
 var routes = [
+  {
+    routePath: "/api/load",
+    mountPath: "/api",
+    method: "GET",
+    middlewares: [],
+    modules: [onRequestGet]
+  },
   {
     routePath: "/api/about",
     mountPath: "/api",
@@ -3844,7 +3876,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-KsW0oh/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-wj4jlz/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -3876,7 +3908,7 @@ function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-KsW0oh/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-wj4jlz/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
@@ -3978,4 +4010,4 @@ export {
   __INTERNAL_WRANGLER_MIDDLEWARE__,
   middleware_loader_entry_default as default
 };
-//# sourceMappingURL=functionsWorker-0.6799851993908607.mjs.map
+//# sourceMappingURL=functionsWorker-0.04915293750291028.mjs.map

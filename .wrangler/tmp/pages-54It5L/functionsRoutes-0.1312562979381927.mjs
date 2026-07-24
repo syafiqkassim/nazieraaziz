@@ -1,3 +1,4 @@
+import { onRequestGet as __api_load_js_onRequestGet } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\load.js"
 import { onRequest as __api_about_js_onRequest } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\about.js"
 import { onRequest as __api_auth_js_onRequest } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\auth.js"
 import { onRequest as __api_contact_js_onRequest } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\contact.js"
@@ -13,6 +14,13 @@ import { onRequest as __api_testimonials_js_onRequest } from "C:\\Users\\SYAFIQ\
 
 export const routes = [
     {
+      routePath: "/api/load",
+      mountPath: "/api",
+      method: "GET",
+      middlewares: [],
+      modules: [__api_load_js_onRequestGet],
+    },
+  {
       routePath: "/api/about",
       mountPath: "/api",
       method: "",

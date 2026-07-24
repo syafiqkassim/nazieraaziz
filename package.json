@@ -10,6 +10,8 @@
     "wrangler": "^4.114.0"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.3"
+    "@keystatic/core": "^0.6.0",
+    "bcryptjs": "^3.0.3",
+    "decap-cms-app": "^3.15.0"
   }
 }

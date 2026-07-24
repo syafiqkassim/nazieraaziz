@@ -1,0 +1,6 @@
+title: Naziera CMS Admin
+login_page: /admin/login.html
+dashboard_page: /admin/dashboard.html
+api_base: /api
+session_cookie: session
+secure_cookies: true

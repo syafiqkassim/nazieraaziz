@@ -29,7 +29,11 @@ export async function onRequest({ request, env }) {
     const token = await signJwt({ sub: user.id, email: user.email }, env.JWT_SECRET);
 
     const maxAge = 60 * 60 * 24; // 1 day
-    const cookie = `session=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=Strict; Secure;`;
+    // Avoid `Secure` when running on localhost/dev so browsers accept the cookie over HTTP.
+    const host = (request.headers.get('host') || '');
+    const isLocal = host.includes('localhost') || host.startsWith('127.') || host.startsWith('[::1]');
+    const secureFlag = isLocal ? '' : 'Secure;';
+    const cookie = `session=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=Strict; ${secureFlag}`;
 
     return new Response(JSON.stringify({ message: 'Authenticated', redirect: '/admin/dashboard.html' }), {
       status: 200,
