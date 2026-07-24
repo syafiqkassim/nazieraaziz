@@ -1,496 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CMS Admin Dashboard</title>
-  <link rel="stylesheet" href="css/dashboard.css" />
-  <script>
-    // Preload auth check: redirect to login if session invalid
-    (function(){
-      try {
-        const resp = fetch('/api/auth', { method: 'GET', credentials: 'same-origin' }).then(r => {
-          if (!r.ok) {
-            window.location.href = '/admin/login.html';
-          }
-        }).catch(() => { window.location.href = '/admin/login.html'; });
-      } catch (e) {
-        window.location.href = '/admin/login.html';
-      }
-    })();
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<style>
+body{
+    font-family:Arial,sans-serif;
+    max-width:800px;
+    margin:40px auto;
+    padding:20px;
+}
+label{
+    display:block;
+    margin-top:20px;
+    font-weight:bold;
+}
+input,textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    box-sizing:border-box;
+}
+textarea{
+    height:120px;
+}
+button{
+    margin-top:20px;
+    padding:12px 20px;
+    cursor:pointer;
+}
+#status{
+    margin-top:15px;
+    color:green;
+}
+</style>
 </head>
 <body>
-  <div class="dashboard-shell">
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-mark">NA</div>
-        <div>
-          <p class="brand-title">Naziera CMS</p>
-          <p class="brand-subtitle">Admin Dashboard</p>
-        </div>
-      </div>
 
-      <nav class="sidebar-nav">
-        <a href="#dashboard" class="sidebar-link active">Dashboard</a>
-        <a href="#hero" class="sidebar-link">Hero</a>
-        <a href="#about" class="sidebar-link">About</a>
-        <a href="#portfolio" class="sidebar-link">Portfolio</a>
-        <a href="#services" class="sidebar-link">Services</a>
-        <a href="#gallery" class="sidebar-link">Gallery</a>
-        <a href="#contact" class="sidebar-link">Contact</a>
-        <a href="#seo" class="sidebar-link">SEO</a>
-        <a href="#settings" class="sidebar-link">Settings</a>
-      </nav>
+<h1>Website CMS</h1>
 
-      <div class="sidebar-footer">
-        <button class="logout-button">Logout</button>
-      </div>
-    </aside>
+<label>Name</label>
+<input id="name">
 
-    <main class="dashboard-main">
-      <header class="topbar">
-        <div>
-          <p class="small-label">Welcome back, Naziera</p>
-          <h1>Admin dashboard overview</h1>
-        </div>
-        <div class="topbar-actions">
-          <button class="topbar-button">New update</button>
-        </div>
-      </header>
+<label>Title</label>
+<input id="title">
 
-      <section class="overview-cards" id="dashboard">
-        <article class="status-card">
-          <div class="card-row">
-            <p class="card-label">Website Status</p>
-            <span class="status-pill online">Online</span>
-          </div>
-          <p class="card-value">All systems active</p>
-          <p class="card-meta">No issues detected in the last 24 hours.</p>
-        </article>
+<label>Description</label>
+<textarea id="description"></textarea>
 
-        <article class="status-card">
-          <div class="card-row">
-            <p class="card-label">Total Portfolio</p>
-            <span class="status-pill">18 items</span>
-          </div>
-          <p class="card-value">Portfolio content ready</p>
-          <p class="card-meta">Review your latest published work.</p>
-        </article>
+<button onclick="save()">Save</button>
 
-        <article class="status-card">
-          <div class="card-row">
-            <p class="card-label">Total Images</p>
-            <span class="status-pill">64 files</span>
-          </div>
-          <p class="card-value">Images stored</p>
-          <p class="card-meta">Gallery and visual content summary.</p>
-        </article>
+<p id="status"></p>
 
-        <article class="status-card">
-          <div class="card-row">
-            <p class="card-label">Last Update</p>
-            <span class="status-pill">Today</span>
-          </div>
-          <p class="card-value">June 24, 2026</p>
-          <p class="card-meta">Your latest website changes were saved recently.</p>
-        </article>
-      </section>
+<script>
+async function load(){
 
-      <section class="section-grid">
-        <div class="section-panel hero-editor-panel" id="hero">
-          <div class="section-header">
-            <div>
-              <h2>Hero section editor</h2>
-              <p>Update the hero banner content and preview it instantly.</p>
-            </div>
-            <div class="hero-editor-actions">
-              <button class="secondary-button" id="heroPreviewButton" type="button">Preview</button>
-              <button class="primary-button" id="heroSaveButton" type="button">Save</button>
-            </div>
-          </div>
+const res=await fetch('/api/load');
+const data=await res.json();
 
-          <div class="hero-editor-grid">
-            <form class="hero-editor-form" id="heroForm" autocomplete="off">
-              <div class="form-group">
-                <label for="profilePhoto">Profile Photo</label>
-                <input id="profilePhoto" name="profilePhoto" type="file" accept="image/*" />
-              </div>
+document.getElementById('name').value=data.hero.name;
+document.getElementById('title').value=data.hero.title;
+document.getElementById('description').value=data.hero.description;
 
-              <div class="form-group">
-                <label for="heroName">Name</label>
-                <input id="heroName" name="heroName" type="text" value="Naziera Aziz" />
-              </div>
+}
 
-              <div class="form-group">
-                <label for="heroHeadline">Headline</label>
-                <input id="heroHeadline" name="heroHeadline" type="text" value="Naziera membantu keluarga dan komuniti memahami autism dengan penuh empati, ilmu dan sokongan berstruktur" />
-              </div>
+async function save(){
 
-              <div class="form-group">
-                <label for="heroDescription">Description</label>
-                <textarea id="heroDescription" name="heroDescription" rows="4">Dengan pengalaman bertahun-tahun dalam pendidikan khas, latihan profesional dan sokongan keluarga, Naziera memberi panduan praktikal dan strategi inklusif untuk anak-anak, remaja serta dewasa berkeperluan khas.</textarea>
-              </div>
+const hero={
+name:document.getElementById('name').value,
+title:document.getElementById('title').value,
+description:document.getElementById('description').value
+};
 
-              <div class="form-group">
-                <label for="buttonText">Button Text</label>
-                <input id="buttonText" name="buttonText" type="text" value="Tempah Konsultasi" />
-              </div>
+const res=await fetch('/api/save',{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify({hero})
+});
 
-              <div class="form-group">
-                <label for="buttonLink">Button Link</label>
-                <input id="buttonLink" name="buttonLink" type="url" value="#contact" />
-              </div>
+const result=await res.json();
 
-              <div class="form-group">
-                <label for="backgroundImage">Background Image</label>
-                <input id="backgroundImage" name="backgroundImage" type="file" accept="image/*" />
-              </div>
-            </form>
+document.getElementById('status').innerText=result.message || "Saved";
 
-            <aside class="hero-preview-card">
-              <div class="hero-preview-image" id="heroPreviewImage">
-                <span>Background Preview</span>
-              </div>
-              <div class="hero-preview-content">
-                <div class="hero-preview-avatar" id="heroPreviewAvatar">NA</div>
-                <p class="hero-preview-role" id="heroPreviewName">Naziera Aziz</p>
-                <h3 id="heroPreviewHeadline">Naziera membantu keluarga dan komuniti memahami autism dengan penuh empati, ilmu dan sokongan berstruktur</h3>
-                <p id="heroPreviewDescription">Dengan pengalaman bertahun-tahun dalam pendidikan khas, latihan profesional dan sokongan keluarga, Naziera memberi panduan praktikal dan strategi inklusif untuk anak-anak, remaja serta dewasa berkeperluan khas.</p>
-                <a href="#contact" class="hero-preview-button" id="heroPreviewCta">Tempah Konsultasi</a>
-              </div>
-            </aside>
-          </div>
-        </div>
+}
 
-        <div class="section-panel about-editor-panel" id="about">
-          <div class="section-header">
-            <div>
-              <h2>About Me editor</h2>
-              <p>Edit your biography, experience, skills, and CV link.</p>
-            </div>
-            <div class="hero-editor-actions">
-              <button class="secondary-button" id="aboutPreviewButton" type="button">Preview</button>
-              <button class="primary-button" id="aboutSaveButton" type="button">Save</button>
-            </div>
-          </div>
+load();
+</script>
 
-          <div class="hero-editor-grid about-editor-grid">
-            <form class="hero-editor-form about-editor-form" id="aboutForm" autocomplete="off">
-              <div class="form-group">
-                <label for="aboutTitle">Title</label>
-                <input id="aboutTitle" name="aboutTitle" type="text" value="Tentang Naziera" />
-              </div>
-
-              <div class="form-group">
-                <label for="aboutBiography">Biography</label>
-                <textarea id="aboutBiography" name="aboutBiography" rows="4">Naziera ialah pakar autism dan jurulatih kesejahteraan mental yang berdedikasi untuk membina komuniti inklusif melalui sokongan keluarga, latihan profesional dan intervensi berasaskan kekuatan.</textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="aboutExperience">Experience</label>
-                <textarea id="aboutExperience" name="aboutExperience" rows="3">10+ tahun pengalaman dalam pendidikan khas, perundingan autisme dan pemerkasaan keluarga serta komuniti.</textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="aboutEducation">Education</label>
-                <input id="aboutEducation" name="aboutEducation" type="text" value="Ijazah Sarjana Muda Pendidikan Khas, Pensijilan Pelatih Autisme" />
-              </div>
-
-              <div class="form-group">
-                <label for="aboutAchievements">Achievements</label>
-                <textarea id="aboutAchievements" name="aboutAchievements" rows="3">Penceramah jemputan di persidangan inklusi, penganjur bengkel keluarga, penyumbang modul sokongan neurodiversiti.</textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="aboutSkills">Skills</label>
-                <input id="aboutSkills" name="aboutSkills" type="text" value="Autism coaching, inclusive teaching, family support, emotional wellbeing" />
-              </div>
-
-              <div class="form-group">
-                <label for="aboutResearch">Research Interest</label>
-                <input id="aboutResearch" name="aboutResearch" type="text" value="Strategi pembelajaran neurodivergent dan kesejahteraan mental komuniti" />
-              </div>
-
-              <div class="form-group">
-                <label for="aboutCvLink">CV Download Link</label>
-                <input id="aboutCvLink" name="aboutCvLink" type="url" value="https://example.com/naziera-cv.pdf" />
-              </div>
-            </form>
-
-            <aside class="hero-preview-card about-preview-card">
-              <div class="about-preview-header">
-                <p class="about-preview-label">Preview</p>
-                <h3 id="aboutPreviewTitle">Tentang Naziera</h3>
-              </div>
-              <p id="aboutPreviewBiography">Naziera ialah pakar autism dan jurulatih kesejahteraan mental yang berdedikasi untuk membina komuniti inklusif melalui sokongan keluarga, latihan profesional dan intervensi berasaskan kekuatan.</p>
-
-              <div class="about-preview-block">
-                <p class="about-preview-label">Experience</p>
-                <p id="aboutPreviewExperience">10+ tahun pengalaman dalam pendidikan khas, perundingan autisme dan pemerkasaan keluarga serta komuniti.</p>
-              </div>
-
-              <div class="about-preview-block">
-                <p class="about-preview-label">Education</p>
-                <p id="aboutPreviewEducation">Ijazah Sarjana Muda Pendidikan Khas, Pensijilan Pelatih Autisme</p>
-              </div>
-
-              <div class="about-preview-block">
-                <p class="about-preview-label">Achievements</p>
-                <p id="aboutPreviewAchievements">Penceramah jemputan di persidangan inklusi, penganjur bengkel keluarga, penyumbang modul sokongan neurodiversiti.</p>
-              </div>
-
-              <div class="about-preview-block">
-                <p class="about-preview-label">Skills</p>
-                <div class="chips" id="aboutPreviewSkills">
-                  <span>Autism coaching</span>
-                  <span>Inclusive teaching</span>
-                  <span>Family support</span>
-                  <span>Emotional wellbeing</span>
-                </div>
-              </div>
-
-              <div class="about-preview-block">
-                <p class="about-preview-label">Research Interest</p>
-                <p id="aboutPreviewResearch">Strategi pembelajaran neurodivergent dan kesejahteraan mental komuniti</p>
-              </div>
-
-              <a id="aboutPreviewCv" class="hero-preview-button" href="https://example.com/naziera-cv.pdf" target="_blank">Download CV</a>
-            </aside>
-          </div>
-        </div>
-
-        <div class="section-panel portfolio-manager-panel" id="portfolio">
-          <div class="section-header">
-            <div>
-              <h2>Portfolio manager</h2>
-              <p>Add, edit, and preview projects without backend integration.</p>
-            </div>
-            <div class="hero-editor-actions">
-              <button class="secondary-button" id="portfolioPreviewButton" type="button">Preview</button>
-              <button class="primary-button" id="portfolioSaveButton" type="button">Save Project</button>
-            </div>
-          </div>
-
-          <div class="hero-editor-grid portfolio-manager-grid">
-            <form class="hero-editor-form about-editor-form" id="portfolioForm" autocomplete="off">
-              <input id="projectId" name="projectId" type="hidden" />
-
-              <div class="form-group">
-                <label for="projectTitle">Title</label>
-                <input id="projectTitle" name="projectTitle" type="text" placeholder="Project title" value="Autism Inclusion Workshop" />
-              </div>
-
-              <div class="form-group">
-                <label for="projectDescription">Description</label>
-                <textarea id="projectDescription" name="projectDescription" rows="4" placeholder="Describe the project">A workshop series designed to teach educators and families how to build inclusive learning environments for neurodivergent children.</textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="projectCategory">Category</label>
-                <input id="projectCategory" name="projectCategory" type="text" placeholder="e.g. Workshop" value="Workshop" />
-              </div>
-
-              <div class="form-group">
-                <label for="projectWebsite">Website URL</label>
-                <input id="projectWebsite" name="projectWebsite" type="url" placeholder="https://example.com" value="https://nazieraaziz.com/workshop" />
-              </div>
-
-              <div class="form-group">
-                <label for="projectGithub">GitHub URL</label>
-                <input id="projectGithub" name="projectGithub" type="url" placeholder="https://github.com/" value="https://github.com/nazieraaziz/workshop" />
-              </div>
-
-              <div class="form-group">
-                <label for="projectImage">Upload Image</label>
-                <input id="projectImage" name="projectImage" type="file" accept="image/*" />
-              </div>
-            </form>
-
-            <aside class="portfolio-preview-card">
-              <div class="about-preview-header">
-                <p class="about-preview-label">Preview</p>
-                <h3 id="portfolioPreviewTitle">Autism Inclusion Workshop</h3>
-              </div>
-              <div class="portfolio-preview-image" id="portfolioPreviewImage">
-                <span>Image preview</span>
-              </div>
-              <p id="portfolioPreviewDescription">A workshop series designed to teach educators and families how to build inclusive learning environments for neurodivergent children.</p>
-
-              <div class="project-meta-grid">
-                <div>
-                  <p class="about-preview-label">Category</p>
-                  <p id="portfolioPreviewCategory">Workshop</p>
-                </div>
-                <div>
-                  <p class="about-preview-label">Website</p>
-                  <a id="portfolioPreviewWebsite" href="https://nazieraaziz.com/workshop" target="_blank">View site</a>
-                </div>
-                <div>
-                  <p class="about-preview-label">GitHub</p>
-                  <a id="portfolioPreviewGithub" href="https://github.com/nazieraaziz/workshop" target="_blank">View repo</a>
-                </div>
-              </div>
-            </aside>
-          </div>
-
-          <div class="portfolio-list-section">
-            <div class="section-header">
-              <h3>Project list</h3>
-              <p>Manage saved projects below. Click edit to load a project into the form.</p>
-            </div>
-            <div class="portfolio-list" id="portfolioList"></div>
-          </div>
-        </div>
-
-        <div class="section-panel" id="services">
-          <div class="section-header">
-            <h2>Services</h2>
-            <p>Control the services list shown on the website.</p>
-          </div>
-          <div class="section-content">
-            <p>Highlight your support, training, and coaching offerings.</p>
-          </div>
-        </div>
-
-        <div class="section-panel" id="gallery">
-          <div class="section-header">
-            <h2>Gallery</h2>
-            <p>Organize visual assets for the website.</p>
-          </div>
-          <div class="section-content">
-            <p>Manage photos, illustrations, and case-study images.</p>
-          </div>
-        </div>
-
-        <div class="section-panel contact-editor-panel" id="contact">
-          <div class="section-header">
-            <div>
-              <h2>Contact editor</h2>
-              <p>Manage contact details, office location, and social profiles.</p>
-            </div>
-            <div class="hero-editor-actions">
-              <button class="secondary-button" id="contactPreviewButton" type="button">Preview</button>
-              <button class="primary-button" id="contactSaveButton" type="button">Save</button>
-            </div>
-          </div>
-
-          <div class="hero-editor-grid contact-editor-grid">
-            <form class="hero-editor-form about-editor-form" id="contactForm" autocomplete="off">
-              <div class="form-group">
-                <label for="contactPhone">Phone</label>
-                <input id="contactPhone" name="contactPhone" type="tel" value="+60 12-345 6789" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactEmail">Email</label>
-                <input id="contactEmail" name="contactEmail" type="email" value="nazieraaziz@example.com" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactOffice">Office Address</label>
-                <textarea id="contactOffice" name="contactOffice" rows="3">No. 12, Jalan Utama, Taman Inklusif, Kuala Lumpur, Malaysia</textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="contactMaps">Google Maps</label>
-                <input id="contactMaps" name="contactMaps" type="url" value="https://maps.google.com/?q=Kuala+Lumpur" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactFacebook">Facebook</label>
-                <input id="contactFacebook" name="contactFacebook" type="url" value="https://facebook.com/nazieraaziz" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactInstagram">Instagram</label>
-                <input id="contactInstagram" name="contactInstagram" type="url" value="https://instagram.com/nazieraaziz" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactLinkedIn">LinkedIn</label>
-                <input id="contactLinkedIn" name="contactLinkedIn" type="url" value="https://linkedin.com/in/nazieraaziz" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactTikTok">TikTok</label>
-                <input id="contactTikTok" name="contactTikTok" type="url" value="https://tiktok.com/@nazieraaziz" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactResearchGate">ResearchGate</label>
-                <input id="contactResearchGate" name="contactResearchGate" type="url" value="https://www.researchgate.net/profile/Naziera_Aziz" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactGoogleScholar">Google Scholar</label>
-                <input id="contactGoogleScholar" name="contactGoogleScholar" type="url" value="https://scholar.google.com/citations?user=example" />
-              </div>
-
-              <div class="form-group">
-                <label for="contactOrcid">ORCID</label>
-                <input id="contactOrcid" name="contactOrcid" type="url" value="https://orcid.org/0000-0000-0000-0000" />
-              </div>
-            </form>
-
-            <aside class="contact-preview-card">
-              <div class="about-preview-header">
-                <p class="about-preview-label">Preview</p>
-                <h3>Contact information</h3>
-              </div>
-              <div class="contact-preview-row">
-                <p class="contact-label">Phone</p>
-                <p id="contactPreviewPhone">+60 12-345 6789</p>
-              </div>
-              <div class="contact-preview-row">
-                <p class="contact-label">Email</p>
-                <p id="contactPreviewEmail">nazieraaziz@example.com</p>
-              </div>
-              <div class="contact-preview-row contact-preview-address">
-                <p class="contact-label">Office Address</p>
-                <p id="contactPreviewOffice">No. 12, Jalan Utama, Taman Inklusif, Kuala Lumpur, Malaysia</p>
-              </div>
-              <div class="contact-preview-row">
-                <p class="contact-label">Google Maps</p>
-                <a id="contactPreviewMaps" href="https://maps.google.com/?q=Kuala+Lumpur" target="_blank">Open map</a>
-              </div>
-              <div class="contact-preview-social">
-                <a id="contactPreviewFacebook" href="https://facebook.com/nazieraaziz" target="_blank">Facebook</a>
-                <a id="contactPreviewInstagram" href="https://instagram.com/nazieraaziz" target="_blank">Instagram</a>
-                <a id="contactPreviewLinkedIn" href="https://linkedin.com/in/nazieraaziz" target="_blank">LinkedIn</a>
-                <a id="contactPreviewTikTok" href="https://tiktok.com/@nazieraaziz" target="_blank">TikTok</a>
-                <a id="contactPreviewResearchGate" href="https://www.researchgate.net/profile/Naziera_Aziz" target="_blank">ResearchGate</a>
-                <a id="contactPreviewGoogleScholar" href="https://scholar.google.com/citations?user=example" target="_blank">Google Scholar</a>
-                <a id="contactPreviewOrcid" href="https://orcid.org/0000-0000-0000-0000" target="_blank">ORCID</a>
-              </div>
-            </aside>
-          </div>
-        </div>
-
-        <div class="section-panel" id="seo">
-          <div class="section-header">
-            <h2>SEO</h2>
-            <p>Improve search visibility and meta descriptions.</p>
-          </div>
-          <div class="section-content">
-            <p>Review title tags, descriptions and open graph previews.</p>
-          </div>
-        </div>
-
-        <div class="section-panel" id="settings">
-          <div class="section-header">
-            <h2>Settings</h2>
-            <p>Configure site preferences and admin options.</p>
-          </div>
-          <div class="section-content">
-            <p>Manage branding, notifications, and access controls.</p>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <script src="js/hero.js"></script>
-  <script src="js/dashboard.js"></script>
 </body>
 </html>
