@@ -945,6 +945,32 @@ async function onRequestGet(context2) {
 }
 __name(onRequestGet, "onRequestGet");
 
+// api/save.js
+async function onRequestPost(context2) {
+  const { DB } = context2.env;
+  try {
+    const body = await context2.request.json();
+    await DB.prepare(`
+      UPDATE site_content
+      SET content = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE section = ?
+    `).bind(JSON.stringify(body.hero), "hero").run();
+    return Response.json({
+      success: true,
+      message: "Content saved successfully"
+    });
+  } catch (err) {
+    return Response.json(
+      {
+        success: false,
+        error: err.message
+      },
+      { status: 500 }
+    );
+  }
+}
+__name(onRequestPost, "onRequestPost");
+
 // helpers.js
 var encoder = new TextEncoder();
 var decoder = new TextDecoder();
@@ -3296,6 +3322,13 @@ var routes = [
     modules: [onRequestGet]
   },
   {
+    routePath: "/api/save",
+    mountPath: "/api",
+    method: "POST",
+    middlewares: [],
+    modules: [onRequestPost]
+  },
+  {
     routePath: "/api/about",
     mountPath: "/api",
     method: "",
@@ -3874,7 +3907,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-SCD5dE/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-hTBCIx/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -3906,7 +3939,7 @@ function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-SCD5dE/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-hTBCIx/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

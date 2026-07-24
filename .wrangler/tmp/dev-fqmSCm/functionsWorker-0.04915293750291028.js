@@ -949,6 +949,31 @@ async function onRequestGet(context2) {
 }
 __name(onRequestGet, "onRequestGet");
 __name2(onRequestGet, "onRequestGet");
+async function onRequestPost(context2) {
+  const { DB } = context2.env;
+  try {
+    const body = await context2.request.json();
+    await DB.prepare(`
+      UPDATE site_content
+      SET content = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE section = ?
+    `).bind(JSON.stringify(body.hero), "hero").run();
+    return Response.json({
+      success: true,
+      message: "Content saved successfully"
+    });
+  } catch (err) {
+    return Response.json(
+      {
+        success: false,
+        error: err.message
+      },
+      { status: 500 }
+    );
+  }
+}
+__name(onRequestPost, "onRequestPost");
+__name2(onRequestPost, "onRequestPost");
 var encoder = new TextEncoder();
 var decoder = new TextDecoder();
 function jsonResponse(payload, status = 200) {
@@ -3324,6 +3349,13 @@ var routes = [
     method: "GET",
     middlewares: [],
     modules: [onRequestGet]
+  },
+  {
+    routePath: "/api/save",
+    mountPath: "/api",
+    method: "POST",
+    middlewares: [],
+    modules: [onRequestPost]
   },
   {
     routePath: "/api/about",

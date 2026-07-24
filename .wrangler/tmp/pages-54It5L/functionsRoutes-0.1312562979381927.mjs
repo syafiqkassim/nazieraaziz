@@ -1,4 +1,5 @@
 import { onRequestGet as __api_load_js_onRequestGet } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\load.js"
+import { onRequestPost as __api_save_js_onRequestPost } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\save.js"
 import { onRequest as __api_about_js_onRequest } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\about.js"
 import { onRequest as __api_auth_js_onRequest } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\auth.js"
 import { onRequest as __api_contact_js_onRequest } from "C:\\Users\\SYAFIQ\\Documents\\GitHub\\nazieraaziz\\functions\\api\\contact.js"
@@ -19,6 +20,13 @@ export const routes = [
       method: "GET",
       middlewares: [],
       modules: [__api_load_js_onRequestGet],
+    },
+  {
+      routePath: "/api/save",
+      mountPath: "/api",
+      method: "POST",
+      middlewares: [],
+      modules: [__api_save_js_onRequestPost],
     },
   {
       routePath: "/api/about",
